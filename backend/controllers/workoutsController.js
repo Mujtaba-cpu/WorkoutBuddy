@@ -24,9 +24,21 @@ const workoutController = {
 
         res.status(200).json({ workout });  // return the workout
     },
+
     // POST /workouts
      async createWorkout(req, res) {
         const { title, load, reps } = req.body;
+
+        let emptyFields = [];
+        if (!title) emptyFields.push('title');
+        if (!load) emptyFields.push('load');
+        if (!reps) emptyFields.push('reps');
+
+        if (emptyFields.length > 0) {
+            res.status(400).json({ error: `Missing required field(s): ${emptyFields.join(', ')}`, emptyFields });
+            return;
+        }
+
         try {
             const workout = await WorkoutsModel.create({ title, load, reps });
             res.status(200).json({ workout });
